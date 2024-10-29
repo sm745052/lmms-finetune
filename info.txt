@@ -1,0 +1,226 @@
+Processor: LlavaOnevisionProcessor:
+- image_processor: LlavaOnevisionImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_pad": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_grid_pinpoints": [
+    [
+      384,
+      384
+    ],
+    [
+      384,
+      768
+    ],
+    [
+      384,
+      1152
+    ],
+    [
+      384,
+      1536
+    ],
+    [
+      384,
+      1920
+    ],
+    [
+      384,
+      2304
+    ],
+    [
+      768,
+      384
+    ],
+    [
+      768,
+      768
+    ],
+    [
+      768,
+      1152
+    ],
+    [
+      768,
+      1536
+    ],
+    [
+      768,
+      1920
+    ],
+    [
+      768,
+      2304
+    ],
+    [
+      1152,
+      384
+    ],
+    [
+      1152,
+      768
+    ],
+    [
+      1152,
+      1152
+    ],
+    [
+      1152,
+      1536
+    ],
+    [
+      1152,
+      1920
+    ],
+    [
+      1152,
+      2304
+    ],
+    [
+      1536,
+      384
+    ],
+    [
+      1536,
+      768
+    ],
+    [
+      1536,
+      1152
+    ],
+    [
+      1536,
+      1536
+    ],
+    [
+      1536,
+      1920
+    ],
+    [
+      1536,
+      2304
+    ],
+    [
+      1920,
+      384
+    ],
+    [
+      1920,
+      768
+    ],
+    [
+      1920,
+      1152
+    ],
+    [
+      1920,
+      1536
+    ],
+    [
+      1920,
+      1920
+    ],
+    [
+      1920,
+      2304
+    ],
+    [
+      2304,
+      384
+    ],
+    [
+      2304,
+      768
+    ],
+    [
+      2304,
+      1152
+    ],
+    [
+      2304,
+      1536
+    ],
+    [
+      2304,
+      1920
+    ],
+    [
+      2304,
+      2304
+    ]
+  ],
+  "image_mean": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "image_processor_type": "LlavaOnevisionImageProcessor",
+  "image_std": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "processor_class": "LlavaOnevisionProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "height": 384,
+    "width": 384
+  }
+}
+
+- tokenizer: Qwen2TokenizerFast(name_or_path='llava-hf/llava-onevision-qwen2-0.5b-ov-hf', vocab_size=151643, model_max_length=32768, is_fast=True, padding_side='left', truncation_side='left', special_tokens={'eos_token': '<|im_end|>', 'pad_token': '<|endoftext|>', 'additional_special_tokens': ['<|im_start|>', '<|im_end|>']}, clean_up_tokenization_spaces=False),  added_tokens_decoder={
+        151643: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151644: AddedToken("<|im_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151645: AddedToken("<|im_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151646: AddedToken("<image>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151647: AddedToken("<video>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+}
+- video_processor: LlavaOnevisionVideoProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_pad": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "image_processor_type": "LlavaOnevisionVideoProcessor",
+  "image_std": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "processor_class": "LlavaOnevisionProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "height": 384,
+    "width": 384
+  }
+}
+
+
+{
+  "image_token": "<image>",
+  "num_image_tokens": 729,
+  "processor_class": "LlavaOnevisionProcessor",
+  "video_token": "<video>",
+  "vision_feature_select_strategy": "full"
+}
+
+
+
+----- 
+
+Tokenizer: Qwen2TokenizerFast(name_or_path='llava-hf/llava-onevision-qwen2-0.5b-ov-hf', vocab_size=151643, model_max_length=4096, is_fast=True, padding_side='left', truncation_side='left', special_tokens={'eos_token': '<|im_end|>', 'pad_token': '<|endoftext|>', 'additional_special_tokens': ['<|im_start|>', '<|im_end|>']}, clean_up_tokenization_spaces=False),  added_tokens_decoder={
+        151643: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151644: AddedToken("<|im_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151645: AddedToken("<|im_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151646: AddedToken("<image>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+        151647: AddedToken("<video>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+}

@@ -15,7 +15,7 @@ from transformers import Trainer, deepspeed
 
 from arguments import ModelArguments, DataArguments, TrainingArguments, LoraArguments
 from collators import COLLATORS
-from datasets import LazySupervisedDataset
+from datasets_ import LazySupervisedDataset, ChatASDataset
 from loaders import LOADERS
 from supported_models import MODULE_KEYWORDS
 from utils import (
@@ -60,7 +60,7 @@ def train():
             bnb_4bit_compute_dtype=compute_dtype,
             bnb_4bit_quant_type="nf4", 
         )
-    
+
     # load model, tokenizer, processor
     rank0_print("Loading model, tokenizer, processor...")
     loader = LOADERS[model_args.model_family_id](
@@ -71,8 +71,10 @@ def train():
         use_flash_attn=training_args.use_flash_attn,
         device_map=device_map,
     )
-    model, tokenizer, processor = loader.load()
+    model, tokenizer, processor, config = loader.load()
+    # print(f"Processor: {processor}")
     tokenizer.model_max_length = training_args.model_max_length
+    # print(f"Tokenizer: {tokenizer}")
 
     if training_args.gradient_checkpointing:
         model.enable_input_require_grads()
@@ -145,25 +147,29 @@ def train():
         model = get_peft_model(model, lora_config)
         
     # print trainable parameters for inspection
-    rank0_print("Trainable parameters:")
-    for name, param in model.named_parameters():
-        if param.requires_grad:
-            rank0_print(f"\t{name}")
+    # rank0_print("Trainable parameters:")
+    # for name, param in model.named_parameters():
+    #     if param.requires_grad:
+    #         rank0_print(f"\t{name}")
 
     # load data
     rank0_print("Loading data...")
-    train_dataset = LazySupervisedDataset(
-        data_path=data_args.data_path,
-        image_folder=data_args.image_folder,
-        video_folder=data_args.video_folder,
-        num_frames=data_args.num_frames,
-        model_family_id=model_args.model_family_id,
-        user_key=data_args.user_key,
-        assistant_key=data_args.assistant_key
-    )
-    if data_args.eval_data_path:
-        eval_dataset = LazySupervisedDataset(
-            data_path=data_args.eval_data_path,
+    print(f"Data path: {data_args.data_path}")
+    print(f"Image folder: {data_args.image_folder}")
+    print(f"Image name folder: {data_args.image_name_folder}")
+    if data_args.chatas:
+        train_dataset = ChatASDataset(
+            data_path=data_args.data_path,
+            image_folder=data_args.image_folder,
+            image_name_folder=data_args.image_name_folder,
+            num_frames=data_args.num_frames,
+            model_family_id=model_args.model_family_id,
+            user_key=data_args.user_key,
+            assistant_key=data_args.assistant_key
+        )
+    else:
+        train_dataset = LazySupervisedDataset(
+            data_path=data_args.data_path,
             image_folder=data_args.image_folder,
             video_folder=data_args.video_folder,
             num_frames=data_args.num_frames,
@@ -171,15 +177,49 @@ def train():
             user_key=data_args.user_key,
             assistant_key=data_args.assistant_key
         )
+    if data_args.eval_data_path:
+        if data_args.chatas:
+            eval_dataset = ChatASDataset(
+                data_path=data_args.eval_data_path,
+                image_folder=data_args.image_folder,
+                image_name_folder=data_args.image_name_folder,
+                num_frames=data_args.num_frames,
+                model_family_id=model_args.model_family_id,
+                user_key=data_args.user_key,
+                assistant_key=data_args.assistant_key
+            )
+        else:
+            eval_dataset = LazySupervisedDataset(
+                data_path=data_args.eval_data_path,
+                image_folder=data_args.image_folder,
+                video_folder=data_args.video_folder,
+                num_frames=data_args.num_frames,
+                model_family_id=model_args.model_family_id,
+                user_key=data_args.user_key,
+                assistant_key=data_args.assistant_key
+            )
     else:
         eval_dataset = None
         training_args.eval_strategy = "no"
 
+    print("Creating data collator...")
     # data collator
-    data_collator = COLLATORS[model_args.model_family_id](
-        tokenizer=tokenizer,
-        processor=processor,
-    )
+    if data_args.chatas:
+        print(COLLATORS[model_args.model_family_id + "-chatas"])
+        data_collator = COLLATORS[model_args.model_family_id + "-chatas"](
+            config=config,
+            tokenizer=tokenizer,
+            processor=processor,
+            mask_question_tokens=training_args.mask_question_tokens
+        )
+    else:
+        print(COLLATORS[model_args.model_family_id])
+        data_collator = COLLATORS[model_args.model_family_id](
+            config=config,
+            tokenizer=tokenizer,
+            processor=processor,
+            mask_question_tokens=training_args.mask_question_tokens
+        )
 
     # trainer
     trainer = TrainerWithCustomSampler(

@@ -2,7 +2,7 @@ from typing import Dict, List
 from collections import OrderedDict
 
 from collators import COLLATORS
-from datasets import TO_LOAD_IMAGE
+from datasets_ import TO_LOAD_IMAGE
 from loaders import LOADERS
 
 
@@ -28,6 +28,12 @@ MODULE_KEYWORDS: Dict[str, Dict[str, List]] = {
         "vision_projector": ["multi_modal_projector"],
         "others": ["image_newline", "vision_resampler"],
         "llm": ["language_model"]
+    },
+    "llava-onevision": {
+        "vision_encoder": ["vision_tower"],
+        "vision_projector": ["multi_modal_projector"],
+        "llm": ["language_model"],
+        "others": ["image_newline"]
     },
     "phi3-v": {
         "vision_encoder": ["model.vision_embed_tokens.img_processor"],
@@ -120,29 +126,23 @@ register_model(
 )
 
 # llava-onevision -------------------------------------------
-# register_model(
-#     model_id="llava-onevision-0.5b-si",
-#     model_family_id="llava-onevision",
-#     model_hf_path="llava-hf/llava-onevision-qwen2-0.5b-si-hf"
-# )
+register_model(
+    model_id="llava-onevision-0.5b-ov",
+    model_family_id="llava-onevision",
+    model_hf_path="llava-hf/llava-onevision-qwen2-0.5b-ov-hf"
+)
 
-# register_model(
-#     model_id="llava-onevision-0.5b-ov",
-#     model_family_id="llava-onevision",
-#     model_hf_path="llava-hf/llava-onevision-qwen2-0.5b-ov-hf"
-# )
+register_model(
+    model_id="llava-onevision-7b-ov",
+    model_family_id="llava-onevision",
+    model_hf_path="llava-hf/llava-onevision-qwen2-7b-ov-hf"
+)
 
-# register_model(
-#     model_id="llava-onevision-7b-si",
-#     model_family_id="llava-onevision",
-#     model_hf_path="llava-hf/llava-onevision-qwen2-7b-si-hf"
-# )
-
-# register_model(
-#     model_id="llava-onevision-7b-ov",
-#     model_family_id="llava-onevision",
-#     model_hf_path="llava-hf/llava-onevision-qwen2-7b-ov-hf"
-# )
+register_model(
+    model_id="llava-onevision-72b-ov",
+    model_family_id="llava-onevision",
+    model_hf_path="llava-hf/llava-onevision-qwen2-72b-ov-hf"
+)
 
 # qwen-vl ----------------------------------------------------
 register_model(
